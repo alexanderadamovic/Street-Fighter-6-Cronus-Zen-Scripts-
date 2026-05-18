@@ -1,0 +1,205 @@
+// ================================================
+// SF6 - Mai Shiranuri Combo Script (PS4/PS5)
+// Cronus Zen GPC Script
+// Left Stick = Meterless | Right Stick = Meter
+// Hold SHARE to toggle P1/P2 side
+// ================================================
+
+define COMBO_DELAY = 16;
+define THRESHOLD = 75;
+
+data(0, 1); // 0 = P1 side, 1 = P2 side — index 0 stores current side
+
+// ================================================
+// SIDE TOGGLE
+// Hold SHARE button to flip between P1 and P2 side
+// ================================================
+macro TOGGLE_SIDE() {
+    if(get_pvar(SPVAR_1) == 0) {
+        set_pvar(SPVAR_1, 1); // switch to P2
+    } else {
+        set_pvar(SPVAR_1, 0); // switch to P1
+    }
+    wait 500; // debounce
+}
+
+// ================================================
+// DIRECTION HELPERS (flips based on side)
+// ================================================
+define P1_FORWARD  = PS4_RIGHT;
+define P1_DOWN     = PS4_DOWN;
+define P1_DOWN_FWD = PS4_DOWN_RIGHT;
+
+define P2_FORWARD  = PS4_LEFT;
+define P2_DOWN     = PS4_DOWN;
+define P2_DOWN_FWD = PS4_DOWN_LEFT;
+
+// QCF motion (↓↘→ or ↓↙← depending on side)
+macro QCF(button) {
+    if(get_pvar(SPVAR_1) == 0) {
+        // P1 side
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_RIGHT; wait COMBO_DELAY;
+        press PS4_RIGHT; wait COMBO_DELAY;
+    } else {
+        // P2 side
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_LEFT; wait COMBO_DELAY;
+        press PS4_LEFT; wait COMBO_DELAY;
+    }
+    press button; wait 80;
+    release_all;
+}
+
+macro QCFx2(button) {
+    if(get_pvar(SPVAR_1) == 0) {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_RIGHT; wait COMBO_DELAY;
+        press PS4_RIGHT; wait COMBO_DELAY;
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_RIGHT; wait COMBO_DELAY;
+        press PS4_RIGHT; wait COMBO_DELAY;
+    } else {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_LEFT; wait COMBO_DELAY;
+        press PS4_LEFT; wait COMBO_DELAY;
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_LEFT; wait COMBO_DELAY;
+        press PS4_LEFT; wait COMBO_DELAY;
+    }
+    press button; wait 100;
+    release_all;
+}
+
+macro DRIVE_RUSH() {
+    if(get_pvar(SPVAR_1) == 0) {
+        press PS4_RIGHT; wait 30; release PS4_RIGHT;
+        press PS4_RIGHT; wait 30; release PS4_RIGHT;
+    } else {
+        press PS4_LEFT; wait 30; release PS4_LEFT;
+        press PS4_LEFT; wait 30; release PS4_LEFT;
+    }
+    wait 20;
+}
+
+// ================================================
+// METERLESS COMBOS - Left Stick
+// ================================================
+
+// LS UP: Anti-air (cr.HP xx QCF+HP)
+macro LS_UP_COMBO() {
+    press PS4_DOWN; press TRIANGLE; wait 80;
+    release PS4_DOWN; release TRIANGLE; wait 20;
+    macro_run(QCF(TRIANGLE));
+}
+
+// LS DOWN: Low starter BnB (cr.LK, cr.LK, cr.MK xx QCF+LK)
+macro LS_DOWN_COMBO() {
+    press PS4_DOWN; press CROSS; wait 50; release CROSS; wait 30;
+    press CROSS; wait 50; release CROSS; wait 30;
+    press L2; wait 60; release L2; release PS4_DOWN; wait 20;
+    macro_run(QCF(CROSS));
+}
+
+// LS LEFT: Meterless punish (st.HP xx QCF+HP, QCF+HP)
+macro LS_LEFT_COMBO() {
+    press TRIANGLE; wait 80; release TRIANGLE; wait 20;
+    macro_run(QCF(TRIANGLE));
+    wait 30;
+    macro_run(QCF(TRIANGLE));
+}
+
+// LS RIGHT: Meterless midscreen BnB (cr.MP, st.HP xx QCF+HP)
+macro LS_RIGHT_COMBO() {
+    press PS4_DOWN; press R2; wait 60; release R2; release PS4_DOWN; wait 20;
+    press TRIANGLE; wait 80; release TRIANGLE; wait 20;
+    macro_run(QCF(TRIANGLE));
+}
+
+// ================================================
+// METER COMBOS - Right Stick
+// ================================================
+
+// RS UP: Drive Rush anti-air (DR, cr.HP xx OD QCF+HP+MP)
+macro RS_UP_COMBO() {
+    macro_run(DRIVE_RUSH());
+    press PS4_DOWN; press TRIANGLE; wait 80;
+    release PS4_DOWN; release TRIANGLE; wait 20;
+    if(get_pvar(SPVAR_1) == 0) {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_RIGHT; wait COMBO_DELAY;
+        press PS4_RIGHT; wait COMBO_DELAY;
+    } else {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_LEFT; wait COMBO_DELAY;
+        press PS4_LEFT; wait COMBO_DELAY;
+    }
+    press TRIANGLE; press R2; wait 80;
+    release_all;
+}
+
+// RS DOWN: OD Rekka (cr.MK xx OD QCF+LP, followups x2)
+macro RS_DOWN_COMBO() {
+    press PS4_DOWN; press L2; wait 60; release L2; release PS4_DOWN; wait 20;
+    if(get_pvar(SPVAR_1) == 0) {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_RIGHT; wait COMBO_DELAY;
+        press PS4_RIGHT; wait COMBO_DELAY;
+    } else {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_LEFT; wait COMBO_DELAY;
+        press PS4_LEFT; wait COMBO_DELAY;
+    }
+    press SQUARE; press R2; wait 80; release SQUARE; release R2; wait 30;
+    macro_run(QCF(SQUARE));
+    wait 30;
+    macro_run(QCF(SQUARE));
+}
+
+// RS LEFT: Corner Drive Rush (DR, cr.MP, st.HP xx OD QCF+HP)
+macro RS_LEFT_COMBO() {
+    macro_run(DRIVE_RUSH());
+    press PS4_DOWN; press R2; wait 60; release R2; release PS4_DOWN; wait 20;
+    press TRIANGLE; wait 80; release TRIANGLE; wait 20;
+    if(get_pvar(SPVAR_1) == 0) {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_RIGHT; wait COMBO_DELAY;
+        press PS4_RIGHT; wait COMBO_DELAY;
+    } else {
+        press PS4_DOWN; wait COMBO_DELAY;
+        press PS4_DOWN_LEFT; wait COMBO_DELAY;
+        press PS4_LEFT; wait COMBO_DELAY;
+    }
+    press TRIANGLE; press R2; wait 80;
+    release_all;
+}
+
+// RS RIGHT: Super Art (cr.MP, st.HP xx SA1 QCFx2+LP)
+macro RS_RIGHT_COMBO() {
+    press PS4_DOWN; press R2; wait 60; release R2; release PS4_DOWN; wait 20;
+    press TRIANGLE; wait 80; release TRIANGLE; wait 20;
+    macro_run(QCFx2(SQUARE));
+}
+
+// ================================================
+// MAIN LOOP
+// ================================================
+
+main {
+    // Side toggle — hold SHARE
+    if(get_val(PS4_SHARE) && event_press(PS4_SHARE)) {
+        macro_run(TOGGLE_SIDE());
+    }
+
+    // Left Stick — meterless combos
+    if(get_val(STICK_1_Y) < -THRESHOLD) { macro_run(LS_UP_COMBO()); }
+    if(get_val(STICK_1_Y) > THRESHOLD)  { macro_run(LS_DOWN_COMBO()); }
+    if(get_val(STICK_1_X) < -THRESHOLD) { macro_run(LS_LEFT_COMBO()); }
+    if(get_val(STICK_1_X) > THRESHOLD)  { macro_run(LS_RIGHT_COMBO()); }
+
+    // Right Stick — meter combos
+    if(get_val(STICK_2_Y) < -THRESHOLD) { macro_run(RS_UP_COMBO()); }
+    if(get_val(STICK_2_Y) > THRESHOLD)  { macro_run(RS_DOWN_COMBO()); }
+    if(get_val(STICK_2_X) < -THRESHOLD) { macro_run(RS_LEFT_COMBO()); }
+    if(get_val(STICK_2_X) > THRESHOLD)  { macro_run(RS_RIGHT_COMBO()); }
+}
